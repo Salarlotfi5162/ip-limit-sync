@@ -25,6 +25,38 @@ apt update && apt install nginx -y
 systemctl enable nginx
 systemctl start nginx
 ```
+سپس فایل کانفیگ را در مسیر `/etc/nginx/conf.d/dds.conf` ایجاد کنید:
+
+```bash
+nano /etc/nginx/conf.d/dds.conf
+```
+محتوای زیر را در آن قرار دهید (پورت 4040 ورودی تانل شما در سرور ایران است):
+
+
+```bash
+server {
+    listen 80;
+    server_name _;
+
+    location / {
+        proxy_pass [http://127.0.0.1:4040](http://127.0.0.1:4040);
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+}
+```
+
+فایل پیش‌فرض را پاک و انجینکس را ریستارت کنید:
+
+```shell
+rm /etc/nginx/sites-enabled/default
+systemctl restart nginx
+```
+
 
 **گام یک:**
 
